@@ -1,5 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
-
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -22,7 +23,15 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [[
+      'html',
+      {
+        outputFolder: `playwright-reports/${new Date().toISOString().replace(/[:.]/g, '-')}`,
+      },
+    ],
+  ],
+  // Global Teardown
+  globalTeardown: require.resolve('./tests/global-teardown.ts'),
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -30,6 +39,7 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+    headless: false,
   },
 
   /* Configure projects for major browsers */
@@ -39,15 +49,15 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
 
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
+    // {
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'] },
+    // },
 
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
+    // },
 
     /* Test against mobile viewports. */
     // {
