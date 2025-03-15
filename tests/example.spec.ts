@@ -1,15 +1,17 @@
 import { test, expect } from '@playwright/test';
-import { Example } from '../pages/example-page';
+import { sendEmail } from '../utils/smtp.ts';
+import { checkEmail } from '../utils/imap.ts';
+import { verifyEmail } from '../utils/imap-code.ts';
 
-test('has title', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+// Playwright test to automate the flow
+test('Send and Check Email in Playwright', async ({ page }) => {
+  
+  // await sendEmail();
 
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Playwright/);
-});
+  // const result = await checkEmail();
+  // console.log(result)
 
-test.only('get started link', async ({ page }) => {
-  const example = new Example(page);
-  await example.functionOne();
-  await example.newPage();
+  const verify = await verifyEmail();
+  console.log(verify);
+  
 });
